@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard TOFS - Visualisasi Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      body { font-family: Arial, sans-serif; padding: 20px; }
+      h2 { margin-top: 40px; }
+      canvas { max-width: 700px; margin-bottom: 40px; }
+    </style>
+</head>
+<body>
+    <h1>Dashboard TOFS - Visualisasi Data</h1>
+
+    <h2>Top 5 TOFS by Site</h2>
+    <canvas id="top5SiteChart"></canvas>
+
+    <h2>TOFS Count Per Status</h2>
+    <canvas id="statusChart"></canvas>
+
+<script>
+async function fetchData(url) {
+    const response = await fetch(url);
+    return await response.json();
+}
+
+async function renderTop5SiteChart() {
+    const data = await fetchData('/api/top5_tofs_by_site');
+    const ctx = document.getElementById('top5SiteChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: data.sites,
+            datasets: [{
+                label: 'Jumlah TOFS',
+                data: data.counts,
+                backgroundColor: 'rgba(54, 162, 235, 0.7)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: { y: { beginAtZero: true, precision: 0 } }
+        }
+    });
+}
+
+async function renderStatusChart() {
+    const data = await fetchData('/api/tofs_count_per_status');
+    const ctx = document.getElementById('statusChart').getContext('2d');
+
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: data.statuses,
+            datasets: [{
+                label: 'Jumlah TOFS',
+                data: data.counts,
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 99, 132, 0.7)'
+                    
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 0.7)',
+                    'rgba(255, 99, 132, 0.7)'
+                ],
+                borderWidth: 1
+            }]
+        }
+    });
+}
+
+renderTop5SiteChart();
+renderStatusChart();
+</script>
+</body>
+</html>

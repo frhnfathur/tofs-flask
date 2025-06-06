@@ -1,0 +1,150 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid">
+
+  <!-- Page Heading -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Data TOFS <a>(Time Out for Safety) </a></h1>
+    <a href="{{ url_for('add') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+      <i class="fas fa-plus fa-sm text-white-50"></i> Input Data
+    </a>
+  </div>
+  <!-- Filter Form -->
+<form method="GET" class="mb-4 p-3 bg-light rounded shadow-sm">
+  <div class="row g-3 align-items-end">
+
+    <div class="col-md-3">
+      <label for="name" class="form-label fw-semibold">Nama</label>
+      <input type="text" id="name" name="name" class="form-control" placeholder="Cari nama..." value="{{ filters.get('name','') }}">
+    </div>
+
+    <div class="col-md-2">
+      <label for="division" class="form-label fw-semibold">Divisi</label>
+      <select id="division" name="division" class="form-select select2">
+        <option value="">Semua Divisi</option>
+        {% for d in distinct_divisions %}
+        <option value="{{ d }}" {% if filters.get('division') == d %}selected{% endif %}>{{ d }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-2">
+      <label for="site" class="form-label fw-semibold">Site</label>
+      <select id="site" name="site" class="form-select select2">
+        <option value="">Semua Site</option>
+        {% for s in distinct_sites %}
+        <option value="{{ s }}" {% if filters.get('site') == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="sub_location" class="form-label fw-semibold">Sub Lokasi</label>
+      <input type="text" id="sub_location" name="sub_location" class="form-control" placeholder="Cari sub lokasi..." value="{{ filters.get('sub_location','') }}">
+    </div>
+
+    <div class="col-md-2">
+      <label for="status" class="form-label fw-semibold">Status</label>
+      <select id="status" name="status" class="form-select select2">
+        <option value="">Semua Status</option>
+        {% for st in distinct_status %}
+        <option value="{{ st }}" {% if filters.get('status') == st %}selected{% endif %}>{{ st }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="col-md-3">
+      <label for="date_from" class="form-label fw-semibold">Tanggal Dari</label>
+      <input type="date" id="date_from" name="date_from" class="form-control" value="{{ filters.get('date_from','') }}">
+    </div>
+
+    <div class="col-md-3">
+      <label for="date_to" class="form-label fw-semibold">Tanggal Sampai</label>
+      <input type="date" id="date_to" name="date_to" class="form-control" value="{{ filters.get('date_to','') }}">
+    </div>
+
+    <div class="col-md-1 d-flex align-items-end">
+      <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
+
+    <div class="col-md-1 d-flex align-items-end">
+      <a href="{{ url_for('index') }}" class="btn btn-secondary w-100">Reset</a>
+    </div>
+
+  </div>
+</form>
+  <!-- Table -->
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Daftar Laporan TOFS</h6>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+          <thead class="thead-light">
+            <tr>
+              <th>Card</th>
+              <th>Nama</th>
+              <th>Divisi</th>
+              <th>Site</th>
+              <th>Sub Lokasi</th>
+              <th>Tanggal</th>
+              <th>Deskripsi Isu</th>
+              <th>Tindak Lanjut</th>
+              <th>CLSR Terkait</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in reports %}
+            <tr>
+              <td>{{ r.card_number }}</td>
+              <td>{{ r.name }}</td>
+              <td>{{ r.division }}</td>
+              <td>{{ r.site }}</td>
+              <td>{{ r.sub_location }}</td>
+              <td>{{ r.date.strftime('%d/%m/%Y') }}</td>
+              <td>{{ r.issue_description }}</td>
+              <td>{{ r.follow_up }}</td>
+              <td>{{ r.clsr_terkait }}</td>
+              <td>
+                {% if r.status.lower() == 'closed' %}
+                <span class="badge rounded-pill text-white fw-bold" style="background-color: #28a745;">
+                  <i class="fas fa-check-circle me-1"></i> Closed
+                </span>
+                {% else %}
+                <span class="badge rounded-pill text-white fw-bold" style="background-color: #dc3545;">
+                  <i class="fas fa-exclamation-circle me-1"></i> Open
+                </span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ url_for('edit', id=r.id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                <form action="{{ url_for('delete', id=r.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                <button type="submit" class="btn btn-sm btn-danger">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+            </form>
+            </td>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  $(document).ready(function() {
+    $('.select2').select2({
+      width: '100%',
+      theme: 'bootstrap-5',
+      placeholder: 'Pilih...'
+    });
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,42 @@
+node_modules
+
+# Virtual environment
+venv/
+env/
+*.env
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# SQLite database file
+tofs.db
+*.sqlite3
+
+# Flask instance folder (if any)
+instance/
+
+# Upload folder for user files
+uploads/
+
+# IDE/editor settings
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log
+
+# dotenv environment variables file
+.env
+
+# Byte-compiled / optimized / DLL files
+*.py[cod]
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db

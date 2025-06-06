@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container">
+  <h2>Edit Data TOFS</h2>
+  <form method="POST">
+    <div class="mb-3">
+      <label for="name" class="form-label">Nama</label>
+      <input type="text" class="form-control" id="name" name="name" value="{{ report.name }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="division" class="form-label">Divisi</label>
+      <input type="text" class="form-control" id="division" name="division" value="{{ report.division }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="site" class="form-label">Site</label>
+      <input type="text" class="form-control" id="site" name="site" value="{{ report.site }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="sub_location" class="form-label">Sub Lokasi</label>
+      <input type="text" class="form-control" id="sub_location" name="sub_location" value="{{ report.sub_location }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="date" class="form-label">Tanggal</label>
+      <input type="date" class="form-control" id="date" name="date" value="{{ report.date.strftime('%Y-%m-%d') }}" required>
+    </div>
+    <div class="mb-3">
+      <label for="issue_description" class="form-label">Deskripsi Isu</label>
+      <textarea class="form-control" id="issue_description" name="issue_description" rows="3" required>{{ report.issue_description }}</textarea>
+    </div>
+    <div class="mb-3">
+      <label for="follow_up" class="form-label">Tindak Lanjut</label>
+      <textarea class="form-control" id="follow_up" name="follow_up" rows="3">{{ report.follow_up }}</textarea>
+    </div>
+    <div class="mb-3">
+      <option value="">-- Pilih --</option>
+            {% for option in [
+                "Tools & Equipment", "Line of Fire", "Hot Work", "Confined Space", "Powered System",
+                "Lifting Operation", "Working at Height", "Ground-Disturbance Work", "Water-Based Work Activities", "Land Transportation"
+            ] %}
+      <option value="{{ option }}" {% if report.clsr_terkait == option %}selected{% endif %}>{{ option }}</option>
+    {% endfor %}
+    </div>
+    <div class="mb-3">
+      <label for="status" class="form-label">Status</label>
+      <select class="form-select" id="status" name="status" required>
+        <option value="Open" {% if report.status.lower() == 'open' %}selected{% endif %}>Open</option>
+        <option value="Closed" {% if report.status.lower() == 'closed' %}selected{% endif %}>Closed</option>
+      </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Update</button>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary">Batal</a>
+  </form>
+</div>
+{% endblock %}

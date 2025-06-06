@@ -1,0 +1,208 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="mb-4 fw-bold text-primary font-weight-bold">TOFS Dashboard</h1>
+
+  <form method="get" class="mb-5 bg-white p-3 rounded shadow-sm">
+    <div class="row g-3 align-items-center">
+      <div class="col-md">
+        <select name="site" class="form-select">
+          {% for s in sites %}
+            <option value="{{ s }}" {% if s == filter_site %}selected{% endif %}>{{ s }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md">
+        <select name="month" class="form-select" aria-label="Filter Bulan">
+          <option value="All" {% if filter_month == 'All' %}selected{% endif %}>Bulan</option>
+          {% for m in months if m != 'All' %}
+            <option value="{{ m }}" {% if m == filter_month %}selected{% endif %}>{{ m }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md">
+        <select name="year" class="form-select" aria-label="Filter Tahun">
+          {% for y in years %}
+            <option value="{{ y }}" {% if y == filter_year %}selected{% endif %}>{{ y }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md">
+        <select name="division" class="form-select" aria-label="Filter Divisi">
+          {% for d in divisions %}
+            <option value="{{ d }}" {% if d == filter_division %}selected{% endif %}>{{ d }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md">
+        <select name="status" class="form-select" aria-label="Filter Status">
+          {% for st in statuses %}
+            <option value="{{ st }}" {% if st == filter_status %}selected{% endif %}>{{ st }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="col-md">
+        <select name="period" class="form-select" aria-label="Filter Periode">
+          <option value="1_year" {% if selected_period == '1_year' %}selected{% endif %}>1 Tahun Terakhir</option>
+          <option value="6_months" {% if selected_period == '6_months' %}selected{% endif %}>6 Bulan Terakhir</option>
+          <option value="year_to_date" {% if selected_period == 'year_to_date' %}selected{% endif %}>Year To Date</option>
+          <option value="3_years" {% if selected_period == '3_years' %}selected{% endif %}>3 Tahun Terakhir</option>
+        </select>
+      </div>
+      <div class="col-md-auto d-grid">
+        <button type="submit" class="btn btn-primary">Filter</button>
+      </div>
+      <div class="col-md-auto d-grid">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Reset</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="row g-4">
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 rounded">
+        <div class="card-header bg-primary text-white fw-semibold">Jumlah TOFS berdasarkan Site</div>
+        <div class="card-body">
+          <canvas id="chartSite" style="min-height: 250px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 rounded">
+        <div class="card-header bg-primary text-white fw-semibold">Status TOFS (Open / Closed)</div>
+        <div class="card-body d-flex justify-content-center align-items-center" style="min-height: 250px;">
+          <canvas id="chartStatus" style="max-width: 300px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 rounded">
+        <div class="card-header bg-primary text-white fw-semibold">Jumlah Pengisi TOFS</div>
+        <div class="card-body">
+          <canvas id="chartName" style="min-height: 250px;"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-6">
+      <div class="card shadow-sm border-0 rounded">
+        <div class="card-header bg-primary text-white fw-semibold">Pengisian TOFS berdasarkan Waktu ({{ selected_period | replace('_', ' ') | title }})</div>
+        <div class="card-body">
+          <canvas id="chartTime" style="min-height: 250px;"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctxSite = document.getElementById('chartSite').getContext('2d');
+const chartSite = new Chart(ctxSite, {
+  type: 'bar',
+  data: {
+    labels: {{ counts_by_site.keys()|list|tojson }},
+    datasets: [{
+      label: 'Jumlah TOFS',
+      data: {{ counts_by_site.values()|list|tojson }},
+      backgroundColor: 'rgba(13, 110, 253, 0.7)',
+      borderColor: 'rgba(13, 110, 253, 1)',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    scales: { y: { beginAtZero: true } },
+    plugins: { legend: { display: false } },
+    responsive: true,
+    maintainAspectRatio: false,
+  }
+});
+
+const ctxStatus = document.getElementById('chartStatus').getContext('2d');
+const chartStatus = new Chart(ctxStatus, {
+  type: 'doughnut',
+  data: {
+    labels: {{ counts_status.keys()|list|tojson }},
+    datasets: [{
+      label: 'Status',
+      data: {{ counts_status.values()|list|tojson }},
+      backgroundColor: ['#28a745','#dc3545'], // red for open, green for closed
+      hoverOffset: 10,
+      borderWidth: 0
+    }]
+  },
+  options: {
+    plugins: { legend: { position: 'bottom' } },
+    responsive: true,
+    maintainAspectRatio: false,
+  }
+});
+
+const ctxName = document.getElementById('chartName').getContext('2d');
+const chartName = new Chart(ctxName, {
+  type: 'bar',
+  data: {
+    labels: {{ counts_by_name.keys()|list|tojson }},
+    datasets: [{
+      label: 'Jumlah Pengisi',
+      data: {{ counts_by_name.values()|list|tojson }},
+      backgroundColor: 'rgba(255, 193, 7, 0.7)',
+      borderColor: 'rgba(255, 193, 7, 1)',
+      borderWidth: 1,
+      borderRadius: 4
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    scales: { x: { beginAtZero: true } },
+    plugins: { legend: { display: false } },
+    responsive: true,
+    maintainAspectRatio: false,
+  }
+});
+
+const ctxTime = document.getElementById('chartTime').getContext('2d');
+const chartTime = new Chart(ctxTime, {
+  type: 'line',
+  data: {
+    labels: {{ months_sorted|tojson }},
+    datasets: [{
+      label: 'Jumlah Pengisian',
+      data: {{ counts_sorted|tojson }},
+      fill: false,
+      borderColor: 'rgba(102, 16, 242, 1)',
+      backgroundColor: 'rgba(102, 16, 242, 0.2)',
+      tension: 0.2,
+      pointRadius: 4,
+      pointHoverRadius: 7
+    }]
+  },
+  options: {
+    scales: {
+      y: { beginAtZero: true },
+      x: { ticks: { maxRotation: 45, minRotation: 45 } }
+    },
+    plugins: { legend: { position: 'top' } },
+    responsive: true,
+    maintainAspectRatio: false,
+  }
+});
+</script>
+
+<script>
+$(document).ready(function() {
+  $('.select2').select2({
+    width: '100%',
+    theme: 'bootstrap4',
+    placeholder: 'Pilih',
+    allowClear: true
+  });
+});
+</script>
+{% endblock %}
