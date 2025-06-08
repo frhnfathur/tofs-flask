@@ -29,3 +29,29 @@ body {
   transition: all 0.2s ease-in-out;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
+
+
+.login-page {
+  background-color: #f8f9fc;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+
+.auth-wrapper {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-wrapper .card {
+  margin-left: -125px; /* Geser kiri sekitar setengah lebar sidebar */
+  margin-bottom: 125px
+}
+
+.margin-top-custom {
+  margin-top: 30px; /* Atur sesuai tinggi navbar */
+}

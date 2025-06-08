@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid margin-top-custom">
 
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-4">
@@ -74,19 +74,37 @@
       <a href="{{ url_for('index') }}" class="btn btn-secondary w-100">Reset</a>
     </div>
 
+    <div class="col-md-1 d-flex align-items-end">
+      
+    </div>
+
+
+
   </div>
 </form>
   <!-- Table -->
   <div class="card shadow mb-4">
-    <div class="card-header py-3">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap">
       <h6 class="m-0 font-weight-bold text-primary">Daftar Laporan TOFS</h6>
+      <form method="GET" action="{{ url_for('index') }}" class="d-flex mt-3 mt-md-0" role="search">
+        <input type="text" name="q" class="form-control me-2" placeholder="Cari TOFS..." value="{{ request.args.get('q', '') }}">
+        <button type="submit" class="btn btn-primary">Cari</button>
+        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Reset</a>
+        <a href="{{ url_for('download_excel', **request.args) }}" class="btn btn-success ms-2 d-flex align-items-center">
+  <i class="fas fa-file-excel me-2"></i> Excel
+</a>
+      </form>
     </div>
     <div class="card-body">
+      {% if request.args.get('q') %}
+        <p class="text-muted small">Menampilkan hasil pencarian untuk: <strong>{{ request.args.get('q') }}</strong></p>
+      {% endif %}
       <div class="table-responsive">
         <table class="table table-bordered table-hover" width="100%" cellspacing="0">
           <thead class="thead-light">
             <tr>
-              <th>Card</th>
+              <th>No.</th>
+              <th>Nomor Kartu</th>
               <th>Nama</th>
               <th>Divisi</th>
               <th>Site</th>
@@ -96,12 +114,15 @@
               <th>Tindak Lanjut</th>
               <th>CLSR Terkait</th>
               <th>Status</th>
+              {% if current_user.is_authenticated and current_user.role == 'super admin' %}
               <th>Action</th>
+              {% endif %}
             </tr>
           </thead>
           <tbody>
             {% for r in reports %}
             <tr>
+              <td>{{ loop.index + (reports.page - 1) * reports.per_page }}</td>
               <td>{{ r.card_number }}</td>
               <td>{{ r.name }}</td>
               <td>{{ r.division }}</td>
@@ -122,17 +143,49 @@
                 </span>
                 {% endif %}
               </td>
+              {% if current_user.is_authenticated and current_user.role == 'super admin'%}
               <td>
                 <a href="{{ url_for('edit', id=r.id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
                 <form action="{{ url_for('delete', id=r.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
-                <button type="submit" class="btn btn-sm btn-danger">
-                <i class="fas fa-trash"></i> Delete
-            </button>
-            </form>
-            </td>
+                  <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
+                </form>
+              </td>
+              {% endif %}
+          </tr>
             {% endfor %}
           </tbody>
         </table>
+        <nav aria-label="Page navigation">
+  <ul class="pagination">
+    {% if reports.has_prev %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('index', page=reports.prev_num, q=search_query) }}">Previous</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Previous</span></li>
+    {% endif %}
+
+    {% for page_num in reports.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+      {% if page_num %}
+        {% if page_num == reports.page %}
+          <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+        {% else %}
+          <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page_num, q=search_query) }}">{{ page_num }}</a></li>
+        {% endif %}
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">...</span></li>
+      {% endif %}
+    {% endfor %}
+
+    {% if reports.has_next %}
+    <li class="page-item">
+      <a class="page-link" href="{{ url_for('index', page=reports.next_num, q=search_query) }}">Next</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Next</span></li>
+    {% endif %}
+  </ul>
+</nav>
       </div>
     </div>
   </div>

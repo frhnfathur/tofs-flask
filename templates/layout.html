@@ -22,8 +22,9 @@
 </head>
 
 <body id="page-top">
-  <div id="wrapper">
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar" style="top: 0; bottom: 0; left: 0; height: 100vh; z-index: 1030;">
+  <div id="wrapper" class="{% if request.endpoint in ['login', 'register'] %}no-sidebar{% endif %}">
+    {% if request.endpoint not in ['login', 'register'] %}
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar" >
   <!-- Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('index') }}">
     <div class="sidebar-brand-icon">
@@ -56,11 +57,39 @@
       <span>Input Data TOFS</span>
     </a>
   </li>
+
+  <!-- Nav Item - Data User (hanya untuk super admin) -->
+  {% if current_user.is_authenticated and current_user.role == 'super admin' %}
+  <li class="nav-item {% if request.endpoint == 'users' %}active{% endif %}">
+    <a class="nav-link" href="{{ url_for('users') }}">
+      <i class="fas fa-fw fa-users"></i>
+      <span>Data User</span>
+    </a>
+  </li>
+  {% endif %}
+
+  <!-- Sidebar Footer -->
+    <li class="nav-item mt-auto">
+      <div class="px-3 pb-3 text-white small">
+    {% if current_user.is_authenticated %}
+      <div class="fw-bold fs-6 fs-sm-5 fs-md-4 responsive-small-text">👋 {{ current_user.full_name }}</div>
+      <div class="fs-7 fs-sm-6 fs-md-5 responsive-small-text">{{ current_user.role|title }}</div>
+      <a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger mt-2 w-100 text-start">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </a>
+    {% else %}
+      <a href="{{ url_for('login') }}" class="btn btn-sm btn-light text-dark mt-2 w-100 text-start">
+        <i class="fas fa-sign-in-alt"></i> Login
+      </a>
+      {% endif %}
+      </div>
+    </li>
 </ul>
+{% endif %}
 
     
-    <div id="content-wrapper" class="d-flex flex-column">
-      <div id="content" class="container-fluid mt-4">
+    <div id="content-wrapper" class="d-flex flex-column {% if request.endpoint in ['login', 'register'] %}w-100{% endif %}">
+    <div id="content" class="container-fluid {% if request.endpoint in ['login', 'register'] %}p-0 m-0{% endif %}">
         <nav class="navbar navbar-light bg-light d-md-none">
             <button class="btn btn-primary" id="sidebarToggleMobile">
             <i class="fas fa-bars"></i>

@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container py-4">
+<div class="container-fluid margin-top-custom py-3">
   <h1 class="mb-4 fw-bold text-primary font-weight-bold">TOFS Dashboard</h1>
 
   <form method="get" class="mb-5 bg-white p-3 rounded shadow-sm">
@@ -56,9 +56,11 @@
         </select>
       </div>
       <div class="col-md-auto d-grid">
+        <label for="periode" class="form-label fw-semibold"></label>
         <button type="submit" class="btn btn-primary">Filter</button>
       </div>
       <div class="col-md-auto d-grid">
+        <label for="periode" class="form-label fw-semibold"></label>
         <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Reset</a>
       </div>
     </div>

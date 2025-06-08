@@ -1,0 +1,99 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="container-fluid margin-top-custom">
+
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Data User</h1>
+    <a href="{{ url_for('add_user') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+      <i class="fas fa-user-plus fa-sm text-white-50"></i> Tambah User
+    </a>
+  </div>
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap">
+      <h6 class="m-0 font-weight-bold text-primary">Daftar User</h6>
+      <form method="GET" action="{{ url_for('users') }}" class="d-flex mt-3 mt-md-0" role="search">
+        <input type="text" name="q" class="form-control me-2" placeholder="Cari User..." value="{{ request.args.get('q', '') }}">
+        <button type="submit" class="btn btn-primary">Cari</button>
+        <a href="{{ url_for('users') }}" class="btn btn-secondary ms-2">Reset</a>
+      </form>
+    </div>
+    <div class="card-body">
+      {% if request.args.get('q') %}
+        <p class="text-muted small">Menampilkan hasil pencarian untuk: <strong>{{ request.args.get('q') }}</strong></p>
+      {% endif %}
+      <div class="table-responsive">
+        <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+          <thead class="thead-light">
+            <tr>
+              <th>No.</th>
+              <th>Full Name</th>
+              <th>Username</th>
+              <th>Email</th>
+              <th>Role</th>
+              <th>Work Location</th>
+              <th>Jumlah Kartu TOFS</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+            <tr>
+              <td>{{ loop.index + (users.page - 1) * users.per_page }}</td>
+              <td>{{ user.full_name }}</td>
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.role|title }}</td>
+              <td>{{ user.work_location or '-' }}</td>
+              <td>{{ user.tofs_count }}</td>
+              <td>
+                <a href="{{ url_for('edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <form action="{{ url_for('delete_user', user_id=user.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus user ini?');">
+                  <button type="submit" class="btn btn-sm btn-danger">
+                    <i class="fas fa-trash"></i> Delete
+                  </button>
+                </form>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <nav aria-label="Page navigation">
+          <ul class="pagination">
+            {% if users.has_prev %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('users', page=users.prev_num, q=request.args.get('q', '')) }}">Previous</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Previous</span></li>
+            {% endif %}
+
+            {% for page_num in users.iter_pages(left_edge=1, right_edge=1, left_current=2, right_current=2) %}
+              {% if page_num %}
+                {% if page_num == users.page %}
+                  <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
+                {% else %}
+                  <li class="page-item"><a class="page-link" href="{{ url_for('users', page=page_num, q=request.args.get('q', '')) }}">{{ page_num }}</a></li>
+                {% endif %}
+              {% else %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+              {% endif %}
+            {% endfor %}
+
+            {% if users.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="{{ url_for('users', page=users.next_num, q=request.args.get('q', '')) }}">Next</a>
+            </li>
+            {% else %}
+            <li class="page-item disabled"><span class="page-link">Next</span></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
