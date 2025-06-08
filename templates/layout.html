@@ -23,42 +23,49 @@
 
 <body id="page-top">
   <div id="wrapper">
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion d-flex flex-column" id="accordionSidebar" style="height: 100vh;">
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion position-fixed" id="accordionSidebar" style="top: 0; bottom: 0; left: 0; height: 100vh; z-index: 1030;">
   <!-- Brand -->
   <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{{ url_for('index') }}">
     <div class="sidebar-brand-icon">
-        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo TOFS" style="height: 40px;">
+        <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo TOFS" class="img-fluid" style="max-height:40px;">
     </div>
   </a>
 
   <hr class="sidebar-divider my-0">
 
   <!-- Nav Item - Dashboard -->
-  <li class="nav-item">
+  <li class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}">
     <a class="nav-link" href="{{ url_for('dashboard') }}">
       <i class="fas fa-fw fa-chart-area"></i>
-      <span>Dashboard Visualisasi</span>
+      <span>Dashboard</span>
     </a>
   </li>
 
-  <li class="nav-item">
+  <!-- Nav Item - Data TOFS -->
+  <li class="nav-item {% if request.endpoint == 'index' %}active{% endif %}">
     <a class="nav-link" href="{{ url_for('index') }}">
       <i class="fas fa-fw fa-table"></i>
       <span>Data TOFS</span>
     </a>
   </li>
 
-  <li class="nav-item">
+  <!-- Nav Item - Input TOFS -->
+  <li class="nav-item {% if request.endpoint == 'add' %}active{% endif %}">
     <a class="nav-link" href="{{ url_for('add') }}">
       <i class="fas fa-fw fa-plus"></i>
       <span>Input Data TOFS</span>
     </a>
   </li>
-  </ul>
+</ul>
 
     
     <div id="content-wrapper" class="d-flex flex-column">
       <div id="content" class="container-fluid mt-4">
+        <nav class="navbar navbar-light bg-light d-md-none">
+            <button class="btn btn-primary" id="sidebarToggleMobile">
+            <i class="fas fa-bars"></i>
+            </button>
+        </nav>
         {% block content %}
         <!-- konten halaman akan di-override di child template -->
         {% endblock %}
@@ -99,8 +106,32 @@
     });
   </script>
 
+  <script>
+  $(document).ready(function () {
+    $('#sidebarToggleMobile').on('click', function () {
+      $('#accordionSidebar').toggleClass('sidebar-visible');
+    });
+
+    // Opsional: klik di luar sidebar untuk menutupnya (mobile saja)
+    $(document).on('click', function (e) {
+      if (
+        $(window).width() < 768 &&
+        !$(e.target).closest('#accordionSidebar, #sidebarToggleMobile').length
+      ) {
+        $('#accordionSidebar').removeClass('sidebar-visible');
+      }
+    });
+  });
+</script>
+
   {% block scripts %}
   <!-- Optional block untuk menambahkan script khusus di child template -->
   {% endblock %}
 </body>
+
+<footer class="bg-light text-center text-muted py-3 mt-4">
+  <div class="container">
+    <small>© 2025 Farhan Fadhurrahman. All rights reserved.</small>
+  </div>
+</footer>
 </html>

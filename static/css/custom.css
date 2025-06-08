@@ -1,0 +1,31 @@
+body {
+
+  }
+
+  #content-wrapper {
+    margin-left: 250px; /* fix untuk sidebar fixed */
+  }
+
+/* Sidebar mobile hidden by default */
+@media (max-width: 768px) {
+  #accordionSidebar {
+    transform: translateX(-250px);
+    transition: transform 0.3s ease-in-out;
+    position: fixed;
+    z-index: 1050;
+  }
+
+  #accordionSidebar.sidebar-visible {
+    transform: translateX(0);
+  }
+
+  #content-wrapper {
+    margin-left: 0 !important;
+  }
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}

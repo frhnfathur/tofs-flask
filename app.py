@@ -23,6 +23,18 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+CLSR_OPTIONS = [
+    "1. Tools & Equipment",
+    "2. Line of Fire",
+    "3. Hot Work",
+    "4. Confined Space",
+    "5. Powered System",
+    "6. Lifting Operation",
+    "7. Working at Height",
+    "8. Ground-Disturbance Work",
+    "9. Water-Based Work Activities",
+    "10. Land Transportation"
+]
 
 @app.route('/')
 def index():
@@ -129,11 +141,12 @@ def edit(id):
         report.date = datetime.strptime(request.form['date'], '%Y-%m-%d')
         report.issue_description = request.form['issue_description']
         report.follow_up = request.form['follow_up']
+        report.clsr = request.form['clsr_terkait']
         report.status = request.form['status']
         db.session.commit()
         flash('Data TOFS berhasil diperbarui.', 'success')
         return redirect(url_for('index'))
-    return render_template('edit.html', report=report)
+    return render_template('edit.html', report=report, clsr_options=CLSR_OPTIONS)
 
 
 # DELETE data TOFS
@@ -148,7 +161,6 @@ def delete(id):
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    # Ambil filter dari query string
     filter_site = request.args.get('site', type=str)
     filter_month = request.args.get('month', type=int)
     filter_year = request.args.get('year', type=int)
@@ -157,40 +169,34 @@ def dashboard():
 
     query = TOFSReport.query
 
-    # Filter Site
     if filter_site and filter_site != 'All':
         query = query.filter_by(site=filter_site)
-
-    # Filter Division
     if filter_division and filter_division != 'All':
         query = query.filter_by(division=filter_division)
-
-    # Filter Status
     if filter_status and filter_status != 'All':
         query = query.filter_by(status=filter_status)
-
-    # Filter Tahun dan Bulan (tanggal)
     if filter_year:
         query = query.filter(db.extract('year', TOFSReport.date) == filter_year)
     if filter_month:
         query = query.filter(db.extract('month', TOFSReport.date) == filter_month)
 
+    total_tofs = query.count()
+
     reports = query.all()
 
-    # Data chart 1: jumlah kartu TOFS per Site
+    # === CHART 1: Jumlah kartu TOFS per Site ===
     counts_by_site = Counter(r.site for r in reports)
 
-    # Data chart 2: pie status open/closed
+    # === CHART 2: Status Open / Closed ===
     counts_status = Counter(r.status for r in reports)
 
-    # Data chart 3: bar chart nama pengisi TOFS (name)
+    # === CHART 3: Jumlah Pengisi TOFS ===
     counts_by_name = Counter(r.name for r in reports)
 
-    # Data chart 4: line chart jumlah pengisian TOFS berdasarkan waktu
-    # Parameter tambahan: periode pilihan
-    period = request.args.get('period', '1_year')  # default 1 tahun
-
+    # === CHART 4: Jumlah TOFS per bulan dalam periode tertentu ===
+    period = request.args.get('period', '1_year')
     today = date.today()
+
     if period == '6_months':
         start_date = today - timedelta(days=180)
     elif period == 'year_to_date':
@@ -200,32 +206,40 @@ def dashboard():
     else:
         start_date = today - timedelta(days=365)
 
-    # Filter reports untuk periode ini
     reports_period = [r for r in reports if r.date >= start_date]
 
-    # Group by month (format yyyy-mm)
     counts_by_month = defaultdict(int)
     for r in reports_period:
         key = r.date.strftime('%Y-%m')
         counts_by_month[key] += 1
 
-    # Sort months ascending
     months_sorted = sorted(counts_by_month.keys())
     counts_sorted = [counts_by_month[m] for m in months_sorted]
 
-    # Untuk dropdown filter, ambil pilihan unik dari DB
+    # === CHART 5: CLSR Terkait ===
+    clsr_raw = [r.clsr_terkait if r.clsr_terkait else 'Unknown' for r in reports]
+    clsr_counter = Counter(clsr_raw)
+    clsr_sorted = sorted(clsr_counter.items(), key=lambda x: x[1], reverse=True)
+
+    clsr_labels = [item[0] for item in clsr_sorted]
+    clsr_values = [item[1] for item in clsr_sorted]
+
+    # === Filter dropdowns ===
     sites = ['All'] + sorted(set(r.site for r in TOFSReport.query.with_entities(TOFSReport.site).distinct()))
     divisions = ['All'] + sorted(set(r.division for r in TOFSReport.query.with_entities(TOFSReport.division).distinct()))
     statuses = ['All', 'Open', 'Closed']
-    months = ['All'] + [i for i in range(1,13)]
+    months = ['All'] + [i for i in range(1, 13)]
     years = ['All'] + sorted(set(r.date.year for r in TOFSReport.query.with_entities(TOFSReport.date).distinct()), reverse=True)
 
     return render_template('dashboard.html',
+        total_tofs=total_tofs,
         counts_by_site=counts_by_site,
         counts_status=counts_status,
         counts_by_name=counts_by_name,
         months_sorted=months_sorted,
         counts_sorted=counts_sorted,
+        clsr_labels=clsr_labels,
+        clsr_values=clsr_values,
         sites=sites,
         divisions=divisions,
         statuses=statuses,

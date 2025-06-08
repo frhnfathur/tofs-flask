@@ -2,7 +2,7 @@
 {% block content %}
 <div class="container">
   <h2>Edit Data TOFS</h2>
-  <form method="POST">
+  <form method="POST" action="">
     <div class="mb-3">
       <label for="name" class="form-label">Nama</label>
       <input type="text" class="form-control" id="name" name="name" value="{{ report.name }}" required>
@@ -31,15 +31,17 @@
       <label for="follow_up" class="form-label">Tindak Lanjut</label>
       <textarea class="form-control" id="follow_up" name="follow_up" rows="3">{{ report.follow_up }}</textarea>
     </div>
-    <div class="mb-3">
-      <option value="">-- Pilih --</option>
-            {% for option in [
-                "Tools & Equipment", "Line of Fire", "Hot Work", "Confined Space", "Powered System",
-                "Lifting Operation", "Working at Height", "Ground-Disturbance Work", "Water-Based Work Activities", "Land Transportation"
-            ] %}
-      <option value="{{ option }}" {% if report.clsr_terkait == option %}selected{% endif %}>{{ option }}</option>
-    {% endfor %}
-    </div>
+    <div class="form-group">
+      <label for="clsr_terkait">CLSR Terkait</label>
+      <select name="clsr_terkait" id="clsr_terkait" class="form-control" required>
+        <option value="">-- Pilih CLSR --</option>
+        {% for option in clsr_options %}
+        <option value="{{ option }}" {% if report.clsr_terkait == option %}selected{% endif %}>
+          {{ option }}
+        </option>
+      {% endfor %}
+      </select>
+   </div>
     <div class="mb-3">
       <label for="status" class="form-label">Status</label>
       <select class="form-select" id="status" name="status" required>
