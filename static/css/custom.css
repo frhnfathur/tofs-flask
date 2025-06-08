@@ -1,11 +1,14 @@
-body {
+body, html{
 
   }
+
 
   #content-wrapper {
     margin-left: 250px; /* fix untuk sidebar fixed */
   }
-
+.margin-top-custom{
+    margin-top: 25px;
+}
 /* Sidebar mobile hidden by default */
 @media (max-width: 768px) {
   #accordionSidebar {
@@ -31,27 +34,3 @@ body {
 }
 
 
-.login-page {
-  background-color: #f8f9fc;
-  height: 100vh;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-}
-
-
-.auth-wrapper {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.auth-wrapper .card {
-  margin-left: -125px; /* Geser kiri sekitar setengah lebar sidebar */
-  margin-bottom: 125px
-}
-
-.margin-top-custom {
-  margin-top: 30px; /* Atur sesuai tinggi navbar */
-}

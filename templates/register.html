@@ -1,10 +1,80 @@
 {% extends "layout.html" %}
+
 {% block content %}
-<body class="login-page">
-  <div class="auth-wrapper">
-    <div class="card shadow-sm p-4" style="width: 100%; max-width: 450px;">
-      <h2 class="font-weight-bold mb-4">TOFS Zona 5</h2>
-      <h3 class="">Register</h3>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background-color: #f4f6f9;
+  }
+
+  /* Override padding/margin dari layout.html agar tidak ada whitespace samping */
+  .content-wrapper,
+  .container-fluid,
+  .container,
+  main {
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  .auth-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f4f6f9;
+    padding: 1rem;
+  }
+
+  .register-card {
+    max-width: 1000px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    background: #fff;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+    border-radius: 1rem;
+    overflow: hidden;
+    margin-left: -200px;
+  }
+
+  .register-image {
+    background-image: url("{{ url_for('static', filename='img/pheonwj.jpg') }}");
+    background-size: cover;
+    background-position: center;
+    width: 150%;
+  }
+
+  .register-form {
+    padding: 2rem;
+    width: 100%;
+  }
+
+  @media (max-width: 768px) {
+    .register-image {
+      display: none;
+    }
+
+    .register-card {
+      flex-direction: column;
+    }
+
+    .auth-wrapper {
+      padding: 1rem;
+    }
+  }
+</style>
+
+<div class="auth-wrapper">
+  <div class="register-card">
+    <!-- Gambar kiri -->
+    <div class="register-image d-none d-md-block"></div>
+
+    <!-- Form register -->
+    <div class="register-form">
+      <h2 class="fw-bold mb-4">TOFS Zona 5</h2>
+      <h4 class="mb-3 text-primary">Register</h4>
 
       <!-- Flash message -->
       {% with messages = get_flashed_messages(with_categories=true) %}
@@ -31,9 +101,11 @@
           <label class="form-label">Email</label>
           <input type="email" name="email" class="form-control" required>
         </div>
-        <div class="mb-3">
+        <div class="mb-3 position-relative">
           <label class="form-label">Password</label>
-          <input type="password" name="password" class="form-control" required>
+          <input type="password" name="password" class="form-control" id="password" required>
+          <span toggle="#password" class="fa fa-fw fa-eye toggle-password position-absolute"
+                style="top: 73%; right: 15px; transform: translateY(-50%); cursor: pointer; color: #888;"></span>
         </div>
         <div class="mb-3">
           <label class="form-label">Lokasi Kerja</label>
@@ -46,5 +118,23 @@
       </form>
     </div>
   </div>
-</body>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const toggle = document.querySelector(".toggle-password");
+    if (toggle) {
+      const passwordInput = document.querySelector(toggle.getAttribute("toggle"));
+
+      toggle.addEventListener("click", function () {
+        const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+        passwordInput.setAttribute("type", type);
+        this.classList.toggle("fa-eye");
+        this.classList.toggle("fa-eye-slash");
+      });
+    }
+  });
+</script>
 {% endblock %}
