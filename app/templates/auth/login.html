@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "main/layout.html" %}
 
 {% block content %}
 
@@ -100,7 +100,7 @@
         </div>
         <button type="submit" class="btn btn-primary w-100">Login</button>
         <div class="text-center mt-3">
-          <a href="{{ url_for('register') }}">Belum punya akun? Register di sini</a>
+          <a href="{{ url_for('main.register') }}">Belum punya akun? Register di sini</a>
         </div>
       </form>
     </div>

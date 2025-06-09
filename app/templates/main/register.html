@@ -1,71 +1,11 @@
-{% extends "layout.html" %}
+{% extends "main/layout.html" %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+{% endblock %}
 
 {% block content %}
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    background-color: #f4f6f9;
-  }
-
-  /* Override padding/margin dari layout.html agar tidak ada whitespace samping */
-  .content-wrapper,
-  .container-fluid,
-  .container,
-  main {
-    padding-left: 0 !important;
-    margin-left: 0 !important;
-  }
-
-  .auth-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    background-color: #f4f6f9;
-    padding: 1rem;
-  }
-
-  .register-card {
-    max-width: 1000px;
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    background: #fff;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-    border-radius: 1rem;
-    overflow: hidden;
-    margin-left: -200px;
-  }
-
-  .register-image {
-    background-image: url("{{ url_for('static', filename='img/pheonwj.jpg') }}");
-    background-size: cover;
-    background-position: center;
-    width: 150%;
-  }
-
-  .register-form {
-    padding: 2rem;
-    width: 100%;
-  }
-
-  @media (max-width: 768px) {
-    .register-image {
-      display: none;
-    }
-
-    .register-card {
-      flex-direction: column;
-    }
-
-    .auth-wrapper {
-      padding: 1rem;
-    }
-  }
-</style>
-
 <div class="auth-wrapper">
   <div class="register-card">
     <!-- Gambar kiri -->
@@ -113,7 +53,7 @@
         </div>
         <button type="submit" class="btn btn-primary w-100">Daftar</button>
         <div class="text-center mt-3">
-          <a href="{{ url_for('login') }}">Sudah punya akun? Login di sini</a>
+          <a href="{{ url_for('auth.login') }}">Sudah punya akun? Login di sini</a>
         </div>
       </form>
     </div>

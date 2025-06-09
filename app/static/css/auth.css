@@ -1,0 +1,61 @@
+/* static/css/auth.css */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background-color: #f4f6f9;
+}
+
+/* Override SB Admin 2 layout paddings and margins */
+.content-wrapper,
+.container-fluid,
+.container,
+main,
+#content,
+#content-wrapper,
+.page-content {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.auth-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0 1rem;
+}
+
+.register-card {
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  background: #fff;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.register-image {
+  background-image: url("/static/img/tofs.jpg");
+  background-size: cover;
+  background-position: center;
+  width: 50%;
+}
+
+.register-form {
+  padding: 2rem;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .register-image {
+    display: none;
+  }
+
+  .register-card {
+    flex-direction: column;
+  }
+}

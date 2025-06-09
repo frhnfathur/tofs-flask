@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "main/layout.html" %}
 {% block content %}
 <div class="container margin-top-custom">
   <h2>Tambah User Baru</h2>
@@ -33,7 +33,7 @@
     </div>
 
     <button type="submit" class="btn btn-primary">Tambah User</button>
-    <a href="{{ url_for('users') }}" class="btn btn-secondary">Batal</a>
+    <a href="{{ url_for('main.users') }}" class="btn btn-secondary">Batal</a>
   </form>
 </div>
 {% endblock %}

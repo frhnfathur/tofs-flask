@@ -1,12 +1,6 @@
-from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-
-
-
-
-db = SQLAlchemy()
-
+from app import db
 
 class TOFSReport(db.Model):
     __tablename__ = 'tofs_report'
@@ -28,7 +22,7 @@ class User(db.Model, UserMixin):
     full_name = db.Column(db.String(100), nullable=False)
     username = db.Column(db.String(50), unique=True, nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
+    password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='pengguna')  # super admin, admin, pengguna
     work_location = db.Column(db.String(100), nullable=True)
 

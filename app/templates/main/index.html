@@ -1,11 +1,11 @@
-{% extends "layout.html" %}
+{% extends "main/layout.html" %}
 {% block content %}
 <div class="container-fluid margin-top-custom">
 
   <!-- Page Heading -->
   <div class="d-sm-flex align-items-center justify-content-between mb-2">
     <h1 class="h3 mb-0 text-gray-800 font-weight-bold">Data TOFS <a>(Time Out for Safety) </a></h1>
-    <a href="{{ url_for('add') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+    <a href="{{ url_for('main.add') }}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
       <i class="fas fa-plus fa-sm text-white-50"></i> Input Data
     </a>
   </div>
@@ -71,7 +71,7 @@
     </div>
 
     <div class="col-md-1 d-flex align-items-end">
-      <a href="{{ url_for('index') }}" class="btn btn-secondary w-100">Reset</a>
+      <a href="{{ url_for('main.index') }}" class="btn btn-secondary w-100">Reset</a>
     </div>
 
     <div class="col-md-1 d-flex align-items-end">
@@ -86,11 +86,11 @@
   <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between align-items-center flex-wrap">
       <h6 class="m-0 font-weight-bold text-primary">Daftar Laporan TOFS</h6>
-      <form method="GET" action="{{ url_for('index') }}" class="d-flex mt-3 mt-md-0" role="search">
+      <form method="GET" action="{{ url_for('main.index') }}" class="d-flex mt-3 mt-md-0" role="search">
         <input type="text" name="q" class="form-control me-2" placeholder="Cari TOFS..." value="{{ request.args.get('q', '') }}">
         <button type="submit" class="btn btn-primary">Cari</button>
-        <a href="{{ url_for('index') }}" class="btn btn-secondary ms-2">Reset</a>
-        <a href="{{ url_for('download_excel', **request.args) }}" class="btn btn-success ms-2 d-flex align-items-center">
+        <a href="{{ url_for('main.index') }}" class="btn btn-secondary ms-2">Reset</a>
+        <a href="{{ url_for('main.download_excel', **request.args) }}" class="btn btn-success ms-2 d-flex align-items-center">
   <i class="fas fa-file-excel me-2"></i> Excel
 </a>
       </form>
@@ -145,8 +145,8 @@
               </td>
               {% if current_user.is_authenticated and current_user.role == 'super admin'%}
               <td>
-                <a href="{{ url_for('edit', id=r.id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                <form action="{{ url_for('delete', id=r.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
+                <a href="{{ url_for('main.edit', id=r.id) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
+                <form action="{{ url_for('main.delete', id=r.id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin menghapus data ini?');">
                   <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Delete</button>
                 </form>
               </td>
@@ -159,7 +159,7 @@
   <ul class="pagination">
     {% if reports.has_prev %}
     <li class="page-item">
-      <a class="page-link" href="{{ url_for('index', page=reports.prev_num, q=search_query) }}">Previous</a>
+      <a class="page-link" href="{{ url_for('main.index', page=reports.prev_num, q=search_query) }}">Previous</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Previous</span></li>
@@ -170,7 +170,7 @@
         {% if page_num == reports.page %}
           <li class="page-item active"><span class="page-link">{{ page_num }}</span></li>
         {% else %}
-          <li class="page-item"><a class="page-link" href="{{ url_for('index', page=page_num, q=search_query) }}">{{ page_num }}</a></li>
+          <li class="page-item"><a class="page-link" href="{{ url_for('main.index', page=page_num, q=search_query) }}">{{ page_num }}</a></li>
         {% endif %}
       {% else %}
         <li class="page-item disabled"><span class="page-link">...</span></li>
@@ -179,7 +179,7 @@
 
     {% if reports.has_next %}
     <li class="page-item">
-      <a class="page-link" href="{{ url_for('index', page=reports.next_num, q=search_query) }}">Next</a>
+      <a class="page-link" href="{{ url_for('main.index', page=reports.next_num, q=search_query) }}">Next</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Next</span></li>

@@ -1,4 +1,4 @@
-{% extends "layout.html" %}
+{% extends "main/layout.html" %}
 {% block content %}
 <div class="container-fluid margin-top-custom py-3">
   <h1 class="mb-4 fw-bold text-primary font-weight-bold">TOFS Dashboard</h1>
@@ -6,33 +6,39 @@
   <form method="get" class="mb-5 bg-white p-3 rounded shadow-sm">
     <div class="row g-3 align-items-center">
       <div class="col-md">
-        <label for="lokasi" class="form-label fw-semibold">Lokasi</label>
+          <label for="lokasi" class="form-label fw-semibold">Lokasi</label>
         <select name="site" class="form-select">
-          {% for s in sites %}
-            <option value="{{ s }}" {% if s == filter_site %}selected{% endif %}>{{ s }}</option>
+        <option value="">-- Pilih Lokasi --</option>
+        {% for s in sites %}
+          <option value="{{ s }}" {% if s == filter_site %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md">
+        <label for="bulan" class="form-label fw-semibold">Bulan</label>
+        <select name="month" class="form-select">
+          <option value="" {% if not filter_year %}selected{% endif %}>-- Pilih Bulan --</option>
+          {% for value, label in months %}
+            <option value="{{ value }}" {% if filter_month == value %}selected{% endif %}>{{ label }}</option>
           {% endfor %}
         </select>
       </div>
+
       <div class="col-md">
-         <label for="bulan" class="form-label fw-semibold">Bulan</label>
-        <select name="month" class="form-select" aria-label="Filter Bulan">
-          <option value="All" {% if filter_month == 'All' %}selected{% endif %}>Bulan</option>
-          {% for m in months if m != 'All' %}
-            <option value="{{ m }}" {% if m == filter_month %}selected{% endif %}>{{ m }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="col-md">
-        <label for="tahun" class="form-label fw-semibold">Tahun</label>
-        <select name="year" class="form-select" aria-label="Filter Tahun">
+          <label for="tahun" class="form-label fw-semibold">Tahun</label>
+          <select name="year" class="form-select" aria-label="Filter Tahun">
+            <option value="" {% if not filter_year %}selected{% endif %}>-- Pilih Tahun --</option>
           {% for y in years %}
             <option value="{{ y }}" {% if y == filter_year %}selected{% endif %}>{{ y }}</option>
           {% endfor %}
-        </select>
+          </select>
       </div>
+
       <div class="col-md">
-        <label for="tahun" class="form-label fw-semibold">Divisi</label>
+        <label for="divisi" class="form-label fw-semibold">Divisi</label>
         <select name="division" class="form-select" aria-label="Filter Divisi">
+          <option value="">-- Pilih Divisi--</option>
           {% for d in divisions %}
             <option value="{{ d }}" {% if d == filter_division %}selected{% endif %}>{{ d }}</option>
           {% endfor %}
@@ -41,6 +47,7 @@
       <div class="col-md">
         <label for="status" class="form-label fw-semibold">Status</label>
         <select name="status" class="form-select" aria-label="Filter Status">
+          <option value="">-- Pilih Status --</option>
           {% for st in statuses %}
             <option value="{{ st }}" {% if st == filter_status %}selected{% endif %}>{{ st }}</option>
           {% endfor %}
@@ -49,19 +56,21 @@
       <div class="col-md">
         <label for="periode" class="form-label fw-semibold">Periode Data</label>
         <select name="period" class="form-select" aria-label="Filter Periode">
+          <option value="" {% if not selected_period %}selected{% endif %}>-- Pilih Periode --</option>
           <option value="1_year" {% if selected_period == '1_year' %}selected{% endif %}>1 Tahun Terakhir</option>
           <option value="6_months" {% if selected_period == '6_months' %}selected{% endif %}>6 Bulan Terakhir</option>
           <option value="year_to_date" {% if selected_period == 'year_to_date' %}selected{% endif %}>Year To Date</option>
           <option value="3_years" {% if selected_period == '3_years' %}selected{% endif %}>3 Tahun Terakhir</option>
         </select>
       </div>
+
       <div class="col-md-auto d-grid">
         <label for="periode" class="form-label fw-semibold"></label>
         <button type="submit" class="btn btn-primary">Filter</button>
       </div>
       <div class="col-md-auto d-grid">
         <label for="periode" class="form-label fw-semibold"></label>
-        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Reset</a>
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline-secondary">Reset</a>
       </div>
     </div>
   </form>
@@ -138,10 +147,10 @@ const ctxSite = document.getElementById('chartSite').getContext('2d');
 const chartSite = new Chart(ctxSite, {
   type: 'bar',
   data: {
-    labels: {{ counts_by_site.keys()|list|tojson }},
+    labels: {{ site_counts.keys()|list|tojson }},
     datasets: [{
       label: 'Jumlah TOFS',
-      data: {{ counts_by_site.values()|list|tojson }},
+      data: {{ site_counts.values()|list|tojson }},
       backgroundColor: 'rgba(13, 110, 253, 0.7)',
       borderColor: 'rgba(13, 110, 253, 1)',
       borderWidth: 1,

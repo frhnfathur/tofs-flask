@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date, timedelta
-from models import db, TOFSReport, User
+from app.models import db, TOFSReport, User
 from werkzeug.utils import secure_filename
 from flask import send_file
 from sqlalchemy import func, case

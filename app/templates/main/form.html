@@ -1,0 +1,89 @@
+{% extends "main/layout.html" %}
+
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-4 text-gray-800">Tambah Laporan TOFS</h1>
+
+  <div class="card border-0 shadow-sm rounded-3">
+    <div class="card-body px-4 py-4">
+
+      <form method="POST" novalidate>
+        <div class="row g-4">
+
+          <div class="col-md-6">
+            <label for="name" class="form-label fw-semibold">Nama</label>
+            <input type="text" name="name" id="name" class="form-control" placeholder="Nama lengkap" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="division" class="form-label fw-semibold">Divisi</label>
+            <input type="text" name="division" id="division" class="form-control" placeholder="Divisi kerja" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="site" class="form-label fw-semibold">Site</label>
+            <input type="text" name="site" id="site" class="form-control" placeholder="Nama Site" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="sub_location" class="form-label fw-semibold">Sub Lokasi</label>
+            <input type="text" name="sub_location" id="sub_location" class="form-control" placeholder="Detail lokasi" required>
+          </div>
+
+          <div class="col-md-6">
+            <label for="date" class="form-label fw-semibold">Tanggal</label>
+            <input type="date" name="date" id="date" class="form-control" required>
+          </div>
+
+          <div class="col-12">
+            <label for="issue_description" class="form-label fw-semibold">Deskripsi Isu</label>
+            <textarea name="issue_description" id="issue_description" class="form-control" rows="3" placeholder="Jelaskan permasalahan" required></textarea>
+          </div>
+
+          <div class="col-12">
+            <label for="follow_up" class="form-label fw-semibold">Tindak Lanjut</label>
+            <textarea name="follow_up" id="follow_up" class="form-control" rows="3" placeholder="Solusi atau tindakan"></textarea>
+          </div>
+
+          <div class="col-12">
+            <label for="clsr_terkait" class="form-label fw-semibold">CLSR Terkait</label>
+            <select class="form-select" id="clsr_terkait" name="clsr_terkait">
+              <option value="">-- Pilih --</option>
+              <option>1. Tools & Equipment</option>
+              <option>2. Line of Fire</option>
+              <option>3. Hot Work</option>
+              <option>4. Confined Space</option>
+              <option>5. Powered System</option>
+              <option>6. Lifting Operation</option>
+              <option>7. Working at Height</option>
+              <option>8. Ground-Disturbance Work</option>
+              <option>9. Water-Based Work Activities</option>
+              <option>10. Land Transportation</option>
+            </select>
+          </div>
+
+          <div class="col-md-6">
+            <label for="status" class="form-label fw-semibold">Status</label>
+            <select name="status" id="status" class="form-select" required>
+              <option value="">-- Pilih --</option>
+              <option value="Open">Open</option>
+              <option value="Closed">Closed</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+          <button type="submit" class="btn btn-primary px-4">
+            <i class="fas fa-save me-2"></i> Simpan
+          </button>
+          <a href="{{ url_for('main.index') }}" class="btn btn-outline-secondary px-4">
+            <i class="fas fa-arrow-left me-2"></i> Kembali
+          </a>
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
