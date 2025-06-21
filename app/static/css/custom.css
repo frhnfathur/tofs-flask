@@ -46,5 +46,52 @@ select.form-select {
   font-size: 0.95rem;
 }
 
+ .rotate-icon {
+    transition: transform 0.3s ease;
+  }
+  .rotate-icon.rotate {
+    transform: rotate(180deg);
+  }
+
+  /* Navbar mobile fixed bottom */
+.navbar.fixed-bottom.d-md-none {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  border-top: 1px solid #dee2e6;
+}
+
+/* Semua nav-link di navbar mobile */
+.navbar.fixed-bottom.d-md-none .nav-link {
+  flex-grow: 1;
+  color: #6c757d; /* text-muted default */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  padding: 0.25rem 0;
+  transition: color 0.3s ease;
+}
+
+/* Warna aktif */
+.navbar.fixed-bottom.d-md-none .nav-link.text-primary {
+  color: #0d6efd; /* Bootstrap primary */
+}
+
+/* Hover effect */
+.navbar.fixed-bottom.d-md-none .nav-link:hover {
+  color: #0d6efd;
+}
+
+/* Icon plus tampil lebih menonjol */
+.navbar.fixed-bottom.d-md-none .nav-link.text-primary i.fa-plus {
+  font-weight: 700;
+  font-size: 1.7rem;
+}
+
+/* Hilangkan underline di nav-link */
+.navbar.fixed-bottom.d-md-none .nav-link {
+  text-decoration: none !important;
+}
 
 

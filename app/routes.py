@@ -13,6 +13,18 @@ from calendar import month_name
 
 bp = Blueprint('main', __name__)
 
+PERILAKU_WAJIB_OPTIONS = [
+    "1. Saya menerapkan HSSE Golden Rules (Patuh-Intervensi-Peduli)",
+    "2. Saya kompeten dan berwenang untuk melaksanakan pekerjaan",
+    "3. Saya dalam kondisi sehat untuk bekerja (Fit to Work berdasarkan hasil MCU & DCU yang berlaku) dan sehat secara mental",
+    "4. Saya menggunakan APD (Alat Pelindung Diri) yang sesuai",
+    "5. Saya telah mengindentifikasi bahaya dan risiko sebelum pekerjaan dilaksanakan (Last Minute Risk Assessment)",
+    "6. Saya melaporkan setiap kondisi abnormal/anomali yang berbahaya kepada atasan untuk ditanggulangi",
+    "7. Saya memastikan permit to work yang sesuai telah tersedia dan dilaksanakan",
+    "8. Saya menjaga kebersihan dan kerapihan loaksi kerja",
+    "9. Saya melaksanakan perilaku kunci yang disyaratkan dalam 10 elemen CLSR"
+]
+
 CLSR_OPTIONS = [
     "1. Tools & Equipment",
     "2. Line of Fire",
@@ -109,6 +121,7 @@ def index():
 @bp.route('/add', methods=['GET', 'POST'])
 @login_required
 def add():
+
     if request.method == 'POST':
         name = request.form['name']
         division = request.form['division']
@@ -118,7 +131,17 @@ def add():
         issue_description = request.form['issue_description']
         follow_up = request.form['follow_up']
         clsr_terkait = request.form['clsr_terkait']
+        perilaku_wajib = request.form.get('perilaku_wajib')
+        site_supervisor = bool(request.form.get('site_supervisor'))
+        site_superintendent = bool(request.form.get('site_superintendent'))
         status = request.form['status']
+
+        if not all([name, division, site, sub_location, date, issue_description, follow_up, clsr_terkait, perilaku_wajib, status]):
+            flash('Semua field wajib diisi!', 'danger')
+            return redirect(url_for('main.add'))
+        if 'site_supervisor' not in request.form or 'site_superintendent' not in request.form:
+            flash('Checkbox Site Supervisor dan Superintendent wajib dicentang!', 'danger')
+            return redirect(url_for('main.add'))
         
         month = date.strftime('%m')
         year = date.strftime('%y')
@@ -136,6 +159,9 @@ def add():
             follow_up=follow_up,
             clsr_terkait=clsr_terkait,
             status=status,
+            perilaku_wajib=perilaku_wajib,
+            site_supervisor=site_supervisor,
+            site_superintendent=site_superintendent,
             user_id=current_user.id
         )
         db.session.add(report)
@@ -159,10 +185,19 @@ def edit(id):
         report.follow_up = request.form['follow_up']
         report.clsr_terkait = request.form['clsr_terkait']
         report.status = request.form['status']
+
+        perilaku_terpilih = request.form.getlist('perilaku_wajib')
+        report.perilaku_wajib = ','.join(perilaku_terpilih)  
+
+        report.site_supervisor = True if request.form.get('site_supervisor') == '1' else False
+        report.site_superintendent = True if request.form.get('site_superintendent') == '1' else False
+        
         db.session.commit()
         flash('Data TOFS berhasil diperbarui.', 'success')
         return redirect(url_for('main.index'))
-    return render_template('edit.html', report=report, clsr_options=CLSR_OPTIONS)
+    
+    report.perilaku_wajib_list = report.perilaku_wajib.split(',') if report.perilaku_wajib else []
+    return render_template('main/edit.html', report=report, clsr_options=CLSR_OPTIONS, perilaku_options=PERILAKU_WAJIB_OPTIONS)
 
 @bp.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -410,8 +445,7 @@ def download_excel():
     date_to = request.args.get('date_to', '').strip()
     search_query = request.args.get('q', '').strip()
 
-    query = TOFSReport.query.order_by(TOFSReport.date.desc())  # <- pastikan ini ada
-    
+    query = TOFSReport.query.order_by(TOFSReport.date.desc())
     filters = []
 
     if search_query:
@@ -425,7 +459,7 @@ def download_excel():
             TOFSReport.clsr_terkait.ilike(f'%{search_query}%') |
             TOFSReport.status.ilike(f'%{search_query}%')
         )
-    
+
     if name:
         filters.append(TOFSReport.name.ilike(f'%{name}%'))
     if division:
@@ -448,12 +482,13 @@ def download_excel():
             filters.append(TOFSReport.date <= dt)
         except:
             pass
+
     if filters:
         query = query.filter(and_(*filters))
 
     reports = query.all()
 
-    
+    # Ambil semua field kecuali 'id'
     data = []
     for r in reports:
         data.append({
@@ -464,22 +499,55 @@ def download_excel():
             'Sub Location': r.sub_location,
             'Date': r.date.strftime('%Y-%m-%d'),
             'Issue Description': r.issue_description,
-            'Follow Up': r.follow_up,
-            'CLSR Terkait': r.clsr_terkait,
-            'Status': r.status,
+            'Follow Up': r.follow_up or '',
+            'CLSR Terkait': r.clsr_terkait or '',
+            'Perilaku Wajib': r.perilaku_wajib or '',
+            'Site Supervisor': 'Ya' if str(r.site_supervisor).strip() in ['1', 'True', 'true', 'ya', 'Ya'] else 'Tidak',
+            'Site Superintendent': 'Ya' if str(r.site_superintendent).strip() in ['1', 'True', 'true', 'ya', 'Ya'] else 'Tidak',
+            'Status': r.status
         })
 
     df = pd.DataFrame(data)
     output = BytesIO()
     with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
         df.to_excel(writer, index=False, sheet_name='TOFS Reports')
+
+        workbook  = writer.book
+        worksheet = writer.sheets['TOFS Reports']
+         # Buat format wrap text untuk kolom tertentu
+        wrap_format = workbook.add_format({'text_wrap': True, 'valign': 'top'})
+
+        # Terapkan format untuk setiap kolom
+        for idx, col in enumerate(df.columns):
+            max_len = max(df[col].astype(str).map(len).max(), len(col)) + 2
+
+            # Hanya wrap text untuk kolom Issue Description dan Follow Up
+            if col in ['Issue Description', 'Follow Up']:
+                worksheet.set_column(idx, idx, max_len, wrap_format)
+            else:
+                worksheet.set_column(idx, idx, max_len)
+
+        worksheet.set_column('A:A', 15)   # Card Number
+        worksheet.set_column('B:B', 20)   # Name
+        worksheet.set_column('C:C', 15)   # Division
+        worksheet.set_column('D:D', 20)   # Site
+        worksheet.set_column('E:E', 20)   # Sub Location
+        worksheet.set_column('F:F', 12)   # Date
+        worksheet.set_column('G:G', 40)   # Issue Description
+        worksheet.set_column('H:H', 40)   # Follow Up
+        worksheet.set_column('I:I', 25)   # CLSR Terkait
+        worksheet.set_column('J:J', 45)   # Perilaku Wajib
+        worksheet.set_column('K:K', 20)   # Site Supervisor
+        worksheet.set_column('L:L', 22)   # Site Superintendent
+        worksheet.set_column('M:M', 12)   # Status
     output.seek(0)
 
     filename = f'tofs_reports_{datetime.now().strftime("%Y%m%d_%H%M%S")}.xlsx'
 
-    return send_file(output,
-                     mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                     download_name=filename,
-                     as_attachment=True)
-
+    return send_file(
+        output,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        download_name=filename,
+        as_attachment=True
+    )
 

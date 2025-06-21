@@ -7,7 +7,7 @@
   <div class="card border-0 shadow-sm rounded-3">
     <div class="card-body px-4 py-4">
 
-      <form method="POST" novalidate>
+      <form method="POST" validate>
         <div class="row g-4">
 
           <div class="col-md-6">
@@ -17,12 +17,49 @@
 
           <div class="col-md-6">
             <label for="division" class="form-label fw-semibold">Divisi</label>
-            <input type="text" name="division" id="division" class="form-control" placeholder="Divisi kerja" required>
+            <select class="form-select" id="division" name="division">
+              <option value="">-- Pilih --</option>
+              <option>Production</option>
+              <option>Project</option>
+              <option>OSF</option>
+              <option>Drilling</option>
+              <option>Well Intervention</option>
+              <option>SSDP</option>
+              <option>SCM</option>
+              <option>HSSE</option>
+            </select>
           </div>
 
           <div class="col-md-6">
             <label for="site" class="form-label fw-semibold">Site</label>
-            <input type="text" name="site" id="site" class="form-control" placeholder="Nama Site" required>
+            <select class="form-select" id="site" name="site">
+              <option value="">-- Pilih --</option>
+              <option>ECHO</option>
+              <option>BRAVO</option>
+              <option>Seapup-1</option>
+              <option>Seapup-2</option>
+              <option>Seapup-3</option>
+              <option>Central Plant</option>
+              <option>LIMA</option>
+              <option>MIKE-MIKE</option>
+              <option>ZULU</option>
+              <option>FOXTROT</option>
+              <option>PVD-I</option>
+              <option>PVD-II</option>
+              <option>PVD-III</option>
+              <option>FSO Arjuna Prima</option>
+              <option>KLA</option>
+              <option>PAPA</option>
+              <option>UNIFORM</option>
+              <option>ORF Muara Karang</option>
+              <option>ORF Tanjung Priok</option>
+              <option>ORF Cilamaya</option>
+              <option>OPF Balongan</option>
+              <option>MB-2</option>
+              <option>Project Site (Site, Barge, dll)</option>
+              <option>Marunda Shorebase</option>
+              <option>Lainnya (Detailkan pada sub lokasi)</option>
+            </select>
           </div>
 
           <div class="col-md-6">
@@ -62,6 +99,40 @@
             </select>
           </div>
 
+          <div class="col-12">
+            <label for="perilaku_wajib" class="form-label fw-semibold">9 Perilaku Wajib</label>
+            <select class="form-select" id="perilaku_wajib" name="perilaku_wajib">
+                <option value="">-- Pilih --</option>
+                <option>1. Saya menerapkan HSSE Golden Rules (Patuh-Intervensi-Peduli)</option>
+                <option>2. Saya kompeten dan berwenang untuk melaksanakan pekerjaan</option>
+                <option>3. Saya dalam kondisi sehat untuk bekerja (Fit to Work berdasarkan hasil MCU & DCU yang berlaku) dan sehat secara mental</option>
+                <option>4. Saya menggunakan APD (Alat Pelindung Diri) yang sesuai</option>
+                <option>5. Saya telah mengindentifikasi bahaya dan risiko sebelum pekerjaan dilaksanakan (Last Minute Risk Assessment)</option>
+                <option>6. Saya melaporkan setiap kondisi abnormal/anomali yang berbahaya kepada atasan untuk ditanggulangi</option>
+                <option>7. Saya memastikan permit to work yang sesuai telah tersedia dan dilaksanakan</option>
+                <option>8. Saya menjaga kebersihan dan kerapihan loaksi kerja</option>
+                <option>9. Saya melaksanakan perilaku kunci yang disyaratkan dalam 10 elemen CLSR</option>
+            </select>
+            </div>
+
+          <div class="col-md-6">
+            <div class="form-check border rounded p-3 shadow-sm">
+                <input class="form-check-input" type="checkbox" id="site_supervisor" name="site_supervisor" value="1">
+                <label class="form-check-label fw-semibold ms-2" for="site_supervisor">
+                TOFS ini sudah dikomunikasikan dengan <u>Site Supervisor</u>
+                </label>
+            </div>
+            </div>
+
+        <div class="col-md-6">
+            <div class="form-check border rounded p-3 shadow-sm">
+                <input class="form-check-input" type="checkbox" id="site_superintendent" name="site_superintendent" value="1">
+                <label class="form-check-label fw-semibold ms-2" for="site_superintendent">
+                TOFS ini sudah dikomunikasikan dengan <u>Site Superintendent</u>
+                </label>
+            </div>
+            </div>
+
           <div class="col-md-6">
             <label for="status" class="form-label fw-semibold">Status</label>
             <select name="status" id="status" class="form-select" required>
@@ -86,4 +157,5 @@
     </div>
   </div>
 </div>
-{% endblock %}
+
+{% endblock %} 

@@ -16,6 +16,9 @@ class TOFSReport(db.Model):
     clsr_terkait = db.Column(db.String(100))
     status = db.Column(db.String(20), nullable=False, default='Open')
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    perilaku_wajib = db.Column(db.String(255), nullable=True)
+    site_supervisor = db.Column(db.String(100), nullable=True)
+    site_superintendent = db.Column(db.String(100), nullable=True)
 
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
@@ -25,6 +28,8 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255), nullable=False)
     role = db.Column(db.String(20), nullable=False, default='pengguna')  # super admin, admin, pengguna
     work_location = db.Column(db.String(100), nullable=True)
+    
+
 
     # Relationship ke laporan TOFS
     reports = db.relationship('TOFSReport', backref='user', lazy=True)

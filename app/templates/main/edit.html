@@ -9,12 +9,50 @@
     </div>
     <div class="mb-3">
       <label for="division" class="form-label">Divisi</label>
-      <input type="text" class="form-control" id="division" name="division" value="{{ report.division }}" required>
+      <select class="form-select" id="division" name="division" required>
+        <option value="">-- Pilih --</option>
+        <option value="Production" {% if report.division == "Production" %}selected{% endif %}>Production</option>
+        <option value="Project" {% if report.division == "Project" %}selected{% endif %}>Project</option>
+        <option value="OSF" {% if report.division == "OSF" %}selected{% endif %}>OSF</option>
+        <option value="Drilling" {% if report.division == "Drilling" %}selected{% endif %}>Drilling</option>
+        <option value="Well Intervention" {% if report.division == "Well Intervention" %}selected{% endif %}>Well Intervention</option>
+        <option value="SSDP" {% if report.division == "SSDP" %}selected{% endif %}>SSDP</option>
+        <option value="SCM" {% if report.division == "SCM" %}selected{% endif %}>SCM</option>
+        <option value="HSSE" {% if report.division == "HSSE" %}selected{% endif %}>HSSE</option>
+      </select>
     </div>
     <div class="mb-3">
       <label for="site" class="form-label">Site</label>
-      <input type="text" class="form-control" id="site" name="site" value="{{ report.site }}" required>
+      <select class="form-select" id="site" name="site" required>
+        <option value="">-- Pilih --</option>
+        <option value="ECHO" {% if report.site == "ECHO" %}selected{% endif %}>ECHO</option>
+        <option value="BRAVO" {% if report.site == "BRAVO" %}selected{% endif %}>BRAVO</option>
+        <option value="Seapup-1" {% if report.site == "Seapup-1" %}selected{% endif %}>Seapup-1</option>
+        <option value="Seapup-2" {% if report.site == "Seapup-2" %}selected{% endif %}>Seapup-2</option>
+        <option value="Seapup-3" {% if report.site == "Seapup-3" %}selected{% endif %}>Seapup-3</option>
+        <option value="Central Plant" {% if report.site == "Central Plant" %}selected{% endif %}>Central Plant</option>
+        <option value="LIMA" {% if report.site == "LIMA" %}selected{% endif %}>LIMA</option>
+        <option value="MIKE-MIKE" {% if report.site == "MIKE-MIKE" %}selected{% endif %}>MIKE-MIKE</option>
+        <option value="ZULU" {% if report.site == "ZULU" %}selected{% endif %}>ZULU</option>
+        <option value="FOXTROT" {% if report.site == "FOXTROT" %}selected{% endif %}>FOXTROT</option>
+        <option value="PVD-I" {% if report.site == "PVD-I" %}selected{% endif %}>PVD-I</option>
+        <option value="PVD-II" {% if report.site == "PVD-II" %}selected{% endif %}>PVD-II</option>
+        <option value="PVD-III" {% if report.site == "PVD-III" %}selected{% endif %}>PVD-III</option>
+        <option value="FSO Arjuna Prima" {% if report.site == "FSO Arjuna Prima" %}selected{% endif %}>FSO Arjuna Prima</option>
+        <option value="KLA" {% if report.site == "KLA" %}selected{% endif %}>KLA</option>
+        <option value="PAPA" {% if report.site == "PAPA" %}selected{% endif %}>PAPA</option>
+        <option value="UNIFORM" {% if report.site == "UNIFORM" %}selected{% endif %}>UNIFORM</option>
+        <option value="ORF Muara Karang" {% if report.site == "ORF Muara Karang" %}selected{% endif %}>ORF Muara Karang</option>
+        <option value="ORF Tanjung Priok" {% if report.site == "ORF Tanjung Priok" %}selected{% endif %}>ORF Tanjung Priok</option>
+        <option value="ORF Cilamaya" {% if report.site == "ORF Cilamaya" %}selected{% endif %}>ORF Cilamaya</option>
+        <option value="OPF Balongan" {% if report.site == "OPF Balongan" %}selected{% endif %}>OPF Balongan</option>
+        <option value="MB-2" {% if report.site == "MB-2" %}selected{% endif %}>MB-2</option>
+        <option value="Project Site (Site, Barge, dll)" {% if report.site == "Project Site (Site, Barge, dll)" %}selected{% endif %}>Project Site (Site, Barge, dll)</option>
+        <option value="Marunda Shorebase" {% if report.site == "Marunda Shorebase" %}selected{% endif %}>Marunda Shorebase</option>
+        <option value="Lainnya (Detailkan pada sub lokasi)" {% if report.site == "Lainnya (Detailkan pada sub lokasi)" %}selected{% endif %}>Lainnya (Detailkan pada sub lokasi)</option>
+      </select>
     </div>
+
     <div class="mb-3">
       <label for="sub_location" class="form-label">Sub Lokasi</label>
       <input type="text" class="form-control" id="sub_location" name="sub_location" value="{{ report.sub_location }}" required>
@@ -42,6 +80,36 @@
       {% endfor %}
       </select>
    </div>
+
+    <div class="mb-3">
+      <label for="perilaku_wajib" class="form-label">Perilaku Wajib</label>
+      <select name="perilaku_wajib" id="perilaku_wajib" class="form-select" required>
+        <option value="">-- Pilih Perilaku Wajib --</option>
+        {% for option in perilaku_options %}
+          <option value="{{ option }}" {% if report.perilaku_wajib == option %}selected{% endif %}>{{ option }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="site_supervisor" name="site_supervisor" value="1" {% if report.site_supervisor %}checked{% endif %}>
+          <label class="form-check-label" for="site_supervisor">
+            TOFS ini sudah dikomunikasikan dengan Site Supervisor
+          </label>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-check mb-3">
+          <input class="form-check-input" type="checkbox" id="site_superintendent" name="site_superintendent" value="1" {% if report.site_superintendent %}checked{% endif %}>
+          <label class="form-check-label" for="site_superintendent">
+            TOFS ini sudah dikomunikasikan dengan Site Superintendent
+          </label>
+        </div>
+      </div>
+    </div>
     <div class="mb-3">
       <label for="status" class="form-label">Status</label>
       <select class="form-select" id="status" name="status" required>
